@@ -490,8 +490,12 @@
     (fn []
       (this-as this
         (let [c (children this)]
+          (println "maybe will-unmount" (react-id this))
           (when (satisfies? IWillUnmount c)
+            (println "satisfied will-unmount: " (react-id this))
             (will-unmount c))
+          (println "clearing state from" (react-id this) "was:"
+                   (pr-str (get-in @(get-gstate this) [:state-map (react-id this)])))
           (swap! (get-gstate this) update-in [:state-map] dissoc (react-id this))
           (when-let [refs (seq (aget (.-state this) "__om_refs"))]
             (doseq [ref refs]
